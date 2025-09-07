@@ -98,7 +98,7 @@ def run(
                     i + 1, len(PatchCore_list)
                 )
             )
-            scores, segmentations, labels_gt, masks_gt = PatchCore.predict(
+            scores, segmentations = PatchCore.predict(
                 dataloader_dict["testing"]
             )
             aggregator["scores"].append(scores)
@@ -174,27 +174,29 @@ def run(
 
         # Compute PRO score & PW Auroc for all images
         pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
-            segmentations, masks_gt
+            segmentations
         )
-        full_pixel_auroc = pixel_scores["auroc"]
+        # full pixel auroc can't be calculated because we aren't using gt
+        # full_pixel_auroc = pixel_scores["auroc"]
 
+        # comented because no gt aswell
         # Compute PRO score & PW Auroc only images with anomalies
-        sel_idxs = []
-        for i in range(len(masks_gt)):
-            if np.sum(masks_gt[i]) > 0:
-                sel_idxs.append(i)
-        pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
-            [segmentations[i] for i in sel_idxs],
-            [masks_gt[i] for i in sel_idxs],
-        )
-        anomaly_pixel_auroc = pixel_scores["auroc"]
+        # sel_idxs = []
+        # for i in range(len(masks_gt)):
+        #     if np.sum(masks_gt[i]) > 0:
+        #         sel_idxs.append(i)
+        # pixel_scores = patchcore.metrics.compute_pixelwise_retrieval_metrics(
+        #     [segmentations[i] for i in sel_idxs],
+        #     [masks_gt[i] for i in sel_idxs],
+        # )
+        # anomaly_pixel_auroc = pixel_scores["auroc"]
 
         result_collect.append(
             {
                 "dataset_name": dataset_name,
                 "instance_auroc": auroc,
-                "full_pixel_auroc": full_pixel_auroc,
-                "anomaly_pixel_auroc": anomaly_pixel_auroc,
+                # "full_pixel_auroc": full_pixel_auroc,
+                # "anomaly_pixel_auroc": anomaly_pixel_auroc,
             }
         )
 

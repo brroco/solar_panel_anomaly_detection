@@ -186,19 +186,19 @@ class PatchCore(torch.nn.Module):
 
         scores = []
         masks = []
-        labels_gt = []
-        masks_gt = []
+        # labels_gt = None # no ground truth images
+        # masks_gt = None 
         with tqdm.tqdm(dataloader, desc="Inferring...", leave=False) as data_iterator:
             for image in data_iterator:
                 if isinstance(image, dict):
-                    labels_gt.extend(image["is_anomaly"].numpy().tolist())
-                    masks_gt.extend(image["mask"].numpy().tolist())
+                    # labels_gt.extend(image["is_anomaly"].numpy().tolist())
+                    # masks_gt.extend(image["mask"].numpy().tolist())
                     image = image["image"]
                 _scores, _masks = self._predict(image)
                 for score, mask in zip(_scores, _masks):
                     scores.append(score)
                     masks.append(mask)
-        return scores, masks, labels_gt, masks_gt
+        return scores, masks
 
     def _predict(self, images):
         """Infer score and mask for a batch of images."""
